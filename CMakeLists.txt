@@ -1,4 +1,7 @@
 cmake_minimum_required( VERSION 3.20 )
+if( NOT CMAKE_BUILD_TYPE )
+    set( CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE )
+endif()
 
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
 	set( IS_DEBUG     TRUE  )
@@ -94,10 +97,7 @@ if( GCC OR CLANG )
 endif()
 
 
-message( STATUS "-- Using Compiler:")
-execute_process(
-	COMMAND             ${CMAKE_CXX_COMPILER} --version
-	WORKING_DIRECTORY   ${CMAKE_CURRENT_SOURCE_DIR} )
+message( STATUS "-- Using Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}" )
 
 
 if( MSVC )
@@ -237,14 +237,14 @@ elseif( CMAKE_BUILD_TYPE MATCHES Release )
 endif()
 
 
-add_executable( hello
-	src/sor/core.cpp
-	src/sor/core.hpp
-
-	src/global.hpp
-
-	src/hello.cpp
-)
+# add_executable( hello
+#     src/sor/core.cpp
+#     src/sor/core.hpp
+#
+#     src/global.hpp
+#
+#     src/hello.cpp
+# )
 
 add_executable( bench
 	src/sor/core.cpp
@@ -267,8 +267,8 @@ add_executable( bench
 	src/entity4.hpp
 )
 
-set_property(TARGET hello PROPERTY UNITY_BUILD ${USE_Unity_Builds})
-set_property(TARGET hello PROPERTY INTERPROCEDURAL_OPTIMIZATION ${USE_IPO})
+# set_property(TARGET hello PROPERTY UNITY_BUILD ${USE_Unity_Builds})
+# set_property(TARGET hello PROPERTY INTERPROCEDURAL_OPTIMIZATION ${USE_IPO})
 
 set_property(TARGET bench PROPERTY UNITY_BUILD ${USE_Unity_Builds})
 set_property(TARGET bench PROPERTY INTERPROCEDURAL_OPTIMIZATION ${USE_IPO})
@@ -283,23 +283,22 @@ if( FALSE )
 endif()
 
 
-target_include_directories( hello
-	PRIVATE
-	include
+# target_include_directories( hello
+#     PRIVATE
+#     include
+#
+#     ${GTKMM_VARS_INCLUDE_DIRS}
+# )
 
-	${GTKMM_VARS_INCLUDE_DIRS}
-)
-
-target_link_libraries( hello
-	PRIVATE
-	$<IF:$<BOOL:${USE_FMT_HeaderOnly}>, fmt::fmt-header-only, fmt::fmt>
-
-	$<TARGET_NAME_IF_EXISTS:OpenMP::OpenMP_CXX>
-	$<TARGET_NAME_IF_EXISTS:nfd::nfd>
-
-	$<TARGET_NAME_IF_EXISTS:PkgConfig::GTKMM_VARS>
-)
-
+# target_link_libraries( hello
+#     PRIVATE
+#     $<IF:$<BOOL:${USE_FMT_HeaderOnly}>, fmt::fmt-header-only, fmt::fmt>
+#
+#     $<TARGET_NAME_IF_EXISTS:OpenMP::OpenMP_CXX>
+#     $<TARGET_NAME_IF_EXISTS:nfd::nfd>
+#
+#     $<TARGET_NAME_IF_EXISTS:PkgConfig::GTKMM_VARS>
+# )
 target_include_directories( bench
 	PRIVATE
 	include
