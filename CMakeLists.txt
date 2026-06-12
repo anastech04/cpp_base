@@ -315,8 +315,8 @@ target_link_libraries( bench
 	$<TARGET_NAME_IF_EXISTS:benchmark::benchmark>
 	$<TARGET_NAME_IF_EXISTS:benchmark::benchmark_main>
 )
-add_executable( minidb
-    src/minidb/main.cpp
+add_executable( cityflow
+    src/cityflow/main.cpp
 )
 
-target_compile_features( minidb PRIVATE cxx_std_20 )
+target_compile_features( cityflow PRIVATE cxx_std_20 )
