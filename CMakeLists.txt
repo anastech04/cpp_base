@@ -317,6 +317,14 @@ target_link_libraries( bench
 )
 add_executable( cityflow
     src/cityflow/main.cpp
+    src/cityflow/Vehicle.hpp
+    src/cityflow/Vehicle.cpp
+    src/cityflow/TrafficLight.hpp
+    src/cityflow/TrafficLight.cpp
+    src/cityflow/Road.hpp
+    src/cityflow/Road.cpp
+    src/cityflow/Simulation.hpp
+    src/cityflow/Simulation.cpp
 )
 
 target_compile_features( cityflow PRIVATE cxx_std_20 )

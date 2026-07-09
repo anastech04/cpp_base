@@ -1,7 +1,11 @@
+#include "Simulation.hpp"
+
 #include <iostream>
 #include <string>
 
 int main() {
+    cityflow::Simulation simulation;
+
     std::cout << "CityFlow - Traffic Flow Simulator\n";
     std::cout << "Focus: simulation logic, traffic lights, waiting times, congestion.\n";
     std::cout << "Type HELP to see commands.\n";
@@ -19,28 +23,32 @@ int main() {
 
         if (command == "HELP" || command == "help") {
             std::cout << "Available commands:\n";
-            std::cout << "  HELP   - Show commands\n";
-            std::cout << "  START  - Start simulation\n";
-            std::cout << "  STEP   - Run one simulation step\n";
-            std::cout << "  STATS  - Show statistics\n";
-            std::cout << "  EXIT   - Close program\n";
+            std::cout << "  HELP    - Show commands\n";
+            std::cout << "  START   - Start simulation\n";
+            std::cout << "  STEP    - Run one simulation step\n";
+            std::cout << "  STATUS  - Show current traffic status\n";
+            std::cout << "  STATS   - Show simulation statistics\n";
+            std::cout << "  EXIT    - Close program\n";
             continue;
         }
 
         if (command == "START" || command == "start") {
-            std::cout << "Traffic simulation started.\n";
+            simulation.start();
             continue;
         }
 
         if (command == "STEP" || command == "step") {
-            std::cout << "Running one simulation step...\n";
+            simulation.step();
+            continue;
+        }
+
+        if (command == "STATUS" || command == "status") {
+            simulation.printStatus();
             continue;
         }
 
         if (command == "STATS" || command == "stats") {
-            std::cout << "Average travel time: 0\n";
-            std::cout << "Average waiting time: 0\n";
-            std::cout << "Congestion count: 0\n";
+            simulation.printStatistics();
             continue;
         }
 
