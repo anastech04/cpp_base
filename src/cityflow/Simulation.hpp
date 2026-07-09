@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Road.hpp"
-#include "TrafficLight.hpp"
+#include "TrafficController.hpp"
 
 #include <vector>
 
@@ -15,8 +15,7 @@ private:
     Road northRoad;
     Road eastRoad;
 
-    TrafficLight northSouthLight;
-    TrafficLight eastWestLight;
+    TrafficController trafficController;
 
     int arrivedVehicles;
     int totalWaitingTime;

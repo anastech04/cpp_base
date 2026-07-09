@@ -325,6 +325,8 @@ add_executable( cityflow
     src/cityflow/Road.cpp
     src/cityflow/Simulation.hpp
     src/cityflow/Simulation.cpp
+	src/cityflow/TrafficController.hpp
+	src/cityflow/TrafficController.cpp
 )
 
 target_compile_features( cityflow PRIVATE cxx_std_20 )

@@ -9,8 +9,7 @@ Simulation::Simulation()
       nextVehicleId(1),
       northRoad("North Road", "North", "Center", 5),
       eastRoad("East Road", "East", "Center", 5),
-      northSouthLight(3, 1, 3),
-      eastWestLight(3, 1, 3),
+      trafficController(3, 1),
       arrivedVehicles(0),
       totalWaitingTime(0),
       totalTravelTime(0) {}
@@ -44,12 +43,11 @@ void Simulation::generateVehicles() {
 }
 
 void Simulation::updateTrafficLights() {
-    northSouthLight.update();
-    eastWestLight.update();
+    trafficController.update(northRoad.getVehicleCount(), eastRoad.getVehicleCount());
 }
 
 void Simulation::moveVehicles() {
-    auto northVehicle = northRoad.step(northSouthLight.isGreen());
+    auto northVehicle = northRoad.step(trafficController.canNorthSouthPass());
 
     if (northVehicle.has_value()) {
         ++arrivedVehicles;
@@ -58,7 +56,7 @@ void Simulation::moveVehicles() {
         std::cout << "Vehicle passed from North Road.\n";
     }
 
-    auto eastVehicle = eastRoad.step(eastWestLight.isGreen());
+    auto eastVehicle = eastRoad.step(trafficController.canEastWestPass());
 
     if (eastVehicle.has_value()) {
         ++arrivedVehicles;
@@ -70,8 +68,9 @@ void Simulation::moveVehicles() {
 
 void Simulation::printStatus() const {
     std::cout << "\nCurrent status:\n";
-    std::cout << "North-South light: " << northSouthLight.stateToString() << "\n";
-    std::cout << "East-West light: " << eastWestLight.stateToString() << "\n";
+    std::cout << "Current phase: " << trafficController.getCurrentPhaseName() << "\n";
+    std::cout << "North-South light: " << trafficController.getNorthSouthLightState() << "\n";
+    std::cout << "East-West light: " << trafficController.getEastWestLightState() << "\n";
 
     std::cout << "Vehicles waiting on North Road: " << northRoad.getVehicleCount() << "\n";
     std::cout << "Vehicles waiting on East Road: " << eastRoad.getVehicleCount() << "\n";
