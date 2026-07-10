@@ -50,6 +50,8 @@ int main() {
         }
 
         if (command == "HELP" || command == "help") {
+            std::cout << "  CLOSE    - Close road North -> Center\n";
+            std::cout << "  OPEN     - Open road North -> Center\n";
             std::cout << "  GRAPH    - Show road network\n";
             std::cout << "  ROUTE    - Calculate shortest route with Dijkstra\n";
             std::cout << "Available commands:\n";
@@ -137,6 +139,21 @@ if (command == "ROUTE" || command == "route") {
     }
 
     std::cout << "\nTotal travel time: " << route.totalTravelTime << "\n";
+    continue;
+}
+if (command == "CLOSE" || command == "close") {
+    graph.closeRoad("North", "Center");
+    graph.closeRoad("Center", "North");
+
+    std::cout << "Road between North and Center has been closed.\n";
+    continue;
+}
+
+if (command == "OPEN" || command == "open") {
+    graph.openRoad("North", "Center");
+    graph.openRoad("Center", "North");
+
+    std::cout << "Road between North and Center has been opened.\n";
     continue;
 }
 
