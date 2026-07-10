@@ -107,25 +107,26 @@ int main() {
             break;
         }
 
-        if (command == "HELP" || command == "help") {
-            std::cout << "  EXPORT - Export comparison results to CSV\n";
-            
-            std::cout << "  CLOSE    - Close road North -> Center\n";
-            std::cout << "  OPEN     - Open road North -> Center\n";
-            std::cout << "  GRAPH    - Show road network\n";
-            std::cout << "  ROUTE    - Calculate shortest route with Dijkstra\n";
-            std::cout << "Available commands:\n";
-            std::cout << "  HELP     - Show commands\n";
-            std::cout << "  START    - Start simulation\n";
-            std::cout << "  STEP     - Run one simulation step\n";
-            std::cout << "  STATUS   - Show current traffic status\n";
-            std::cout << "  STATS    - Show simulation statistics\n";
-            std::cout << "  FIXED    - Use fixed traffic light timing\n";
-            std::cout << "  ADAPT    - Use adaptive traffic light timing\n";
-            std::cout << "  COMPARE  - Compare fixed and adaptive mode\n";
-            std::cout << "  EXIT     - Close program\n";
-            continue;
-        }
+       if (command == "HELP" || command == "help") {
+    std::cout << "Available commands:\n";
+    std::cout << "  HELP      - Show available commands\n";
+    std::cout << "  START     - Start simulation\n";
+    std::cout << "  STEP      - Run one simulation step\n";
+    std::cout << "  RUN       - Run multiple simulation steps\n";
+    std::cout << "  STATUS    - Show current traffic status\n";
+    std::cout << "  STATS     - Show simulation statistics\n";
+    std::cout << "  FIXED     - Use fixed traffic light timing\n";
+    std::cout << "  ADAPT     - Use adaptive traffic light timing\n";
+    std::cout << "  COMPARE   - Compare fixed and adaptive mode\n";
+    std::cout << "  BENCHMARK - Measure fixed and adaptive runtime\n";
+    std::cout << "  EXPORT    - Export comparison results to CSV\n";
+    std::cout << "  GRAPH     - Show road network\n";
+    std::cout << "  ROUTE     - Calculate shortest route with Dijkstra\n";
+    std::cout << "  CLOSE     - Close road North <-> Center\n";
+    std::cout << "  OPEN      - Open road North <-> Center\n";
+    std::cout << "  EXIT      - Close program\n";
+    continue;
+}
 
         if (command == "START" || command == "start") {
             simulation.start();
