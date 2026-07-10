@@ -2,6 +2,7 @@
 #include "CityGraph.hpp"
 
 #include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -29,6 +30,33 @@ void printComparisonResult(const std::string& name, const cityflow::SimulationSt
     std::cout << "Average travel time: " << stats.averageTravelTime << "\n";
     std::cout << "Total congestion events: "
               << stats.northCongestionEvents + stats.eastCongestionEvents << "\n";
+}
+void printImprovementSummary(const cityflow::SimulationStats& fixedStats,
+                             const cityflow::SimulationStats& adaptiveStats) {
+    const double throughputImprovement =
+        fixedStats.arrivedVehicles == 0
+            ? 0.0
+            : ((adaptiveStats.arrivedVehicles - fixedStats.arrivedVehicles) * 100.0)
+                / fixedStats.arrivedVehicles;
+
+    const double waitingTimeReduction =
+        fixedStats.averageWaitingTime == 0
+            ? 0.0
+            : ((fixedStats.averageWaitingTime - adaptiveStats.averageWaitingTime) * 100.0)
+                / fixedStats.averageWaitingTime;
+
+    const double travelTimeReduction =
+        fixedStats.averageTravelTime == 0
+            ? 0.0
+            : ((fixedStats.averageTravelTime - adaptiveStats.averageTravelTime) * 100.0)
+                / fixedStats.averageTravelTime;
+
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "\nAdaptive improvement summary:\n";
+    std::cout << "Throughput improvement: " << throughputImprovement << "%\n";
+    std::cout << "Waiting time reduction: " << waitingTimeReduction << "%\n";
+    std::cout << "Travel time reduction: " << travelTimeReduction << "%\n";
+    std::cout << std::defaultfloat << std::setprecision(6);
 }
 
 int main() {
@@ -115,6 +143,9 @@ int main() {
             printComparisonResult("Fixed", fixedSimulation.getStatistics());
             printComparisonResult("Adaptive", adaptiveSimulation.getStatistics());
 
+            printImprovementSummary(fixedSimulation.getStatistics(),
+                        adaptiveSimulation.getStatistics());
+
             continue;
         }
         if (command == "GRAPH" || command == "graph") {
@@ -189,6 +220,9 @@ if (command == "BENCHMARK" || command == "benchmark") {
 
     printComparisonResult("Fixed", fixedSimulation.getStatistics());
     printComparisonResult("Adaptive", adaptiveSimulation.getStatistics());
+    
+    printImprovementSummary(fixedSimulation.getStatistics(),
+                        adaptiveSimulation.getStatistics());
 
     continue;
 }
