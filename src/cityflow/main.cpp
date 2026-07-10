@@ -2,6 +2,7 @@
 #include "CityGraph.hpp"
 
 #include <chrono>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -58,6 +59,34 @@ void printImprovementSummary(const cityflow::SimulationStats& fixedStats,
     std::cout << "Travel time reduction: " << travelTimeReduction << "%\n";
     std::cout << std::defaultfloat << std::setprecision(6);
 }
+void exportComparisonResultsToCsv(const std::string& fileName,
+                                  const cityflow::SimulationStats& fixedStats,
+                                  const cityflow::SimulationStats& adaptiveStats) {
+    std::ofstream file(fileName);
+
+    if (!file) {
+        std::cout << "Could not write CSV file: " << fileName << "\n";
+        return;
+    }
+
+    file << "mode,steps,arrived_vehicles,average_waiting_time,average_travel_time,total_congestion_events\n";
+
+    file << "Fixed,"
+         << fixedStats.steps << ","
+         << fixedStats.arrivedVehicles << ","
+         << fixedStats.averageWaitingTime << ","
+         << fixedStats.averageTravelTime << ","
+         << fixedStats.northCongestionEvents + fixedStats.eastCongestionEvents << "\n";
+
+    file << "Adaptive,"
+         << adaptiveStats.steps << ","
+         << adaptiveStats.arrivedVehicles << ","
+         << adaptiveStats.averageWaitingTime << ","
+         << adaptiveStats.averageTravelTime << ","
+         << adaptiveStats.northCongestionEvents + adaptiveStats.eastCongestionEvents << "\n";
+
+    std::cout << "\nCSV export written to: " << fileName << "\n";
+}
 
 int main() {
     cityflow::Simulation simulation;
@@ -79,6 +108,7 @@ int main() {
         }
 
         if (command == "HELP" || command == "help") {
+            std::cout << "  EXPORT - Export comparison results to CSV\n";
             
             std::cout << "  CLOSE    - Close road North -> Center\n";
             std::cout << "  OPEN     - Open road North -> Center\n";
@@ -223,6 +253,31 @@ if (command == "BENCHMARK" || command == "benchmark") {
     
     printImprovementSummary(fixedSimulation.getStatistics(),
                         adaptiveSimulation.getStatistics());
+
+    continue;
+}
+if (command == "EXPORT" || command == "export") {
+    cityflow::Simulation fixedSimulation;
+    fixedSimulation.useFixedMode(false);
+    fixedSimulation.runSteps(30, false);
+
+    cityflow::Simulation adaptiveSimulation;
+    adaptiveSimulation.useAdaptiveMode(false);
+    adaptiveSimulation.runSteps(30, false);
+
+    const auto fixedStats = fixedSimulation.getStatistics();
+    const auto adaptiveStats = adaptiveSimulation.getStatistics();
+
+    std::cout << "\nExport comparison after 30 simulation steps:\n";
+
+    printComparisonResult("Fixed", fixedStats);
+    printComparisonResult("Adaptive", adaptiveStats);
+
+    printImprovementSummary(fixedStats, adaptiveStats);
+
+    exportComparisonResultsToCsv("data/simulation_results.csv",
+                                 fixedStats,
+                                 adaptiveStats);
 
     continue;
 }
