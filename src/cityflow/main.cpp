@@ -3,6 +3,16 @@
 #include <iostream>
 #include <string>
 
+void printComparisonResult(const std::string& name, const cityflow::SimulationStats& stats) {
+    std::cout << "\n" << name << " mode result:\n";
+    std::cout << "Steps: " << stats.steps << "\n";
+    std::cout << "Arrived vehicles: " << stats.arrivedVehicles << "\n";
+    std::cout << "Average waiting time: " << stats.averageWaitingTime << "\n";
+    std::cout << "Average travel time: " << stats.averageTravelTime << "\n";
+    std::cout << "Total congestion events: "
+              << stats.northCongestionEvents + stats.eastCongestionEvents << "\n";
+}
+
 int main() {
     cityflow::Simulation simulation;
 
@@ -22,15 +32,16 @@ int main() {
         }
 
         if (command == "HELP" || command == "help") {
-            std::cout << "  FIXED   - Use fixed traffic light timing\n";
-            std::cout << "  ADAPT   - Use adaptive traffic light timing\n";
             std::cout << "Available commands:\n";
-            std::cout << "  HELP    - Show commands\n";
-            std::cout << "  START   - Start simulation\n";
-            std::cout << "  STEP    - Run one simulation step\n";
-            std::cout << "  STATUS  - Show current traffic status\n";
-            std::cout << "  STATS   - Show simulation statistics\n";
-            std::cout << "  EXIT    - Close program\n";
+            std::cout << "  HELP     - Show commands\n";
+            std::cout << "  START    - Start simulation\n";
+            std::cout << "  STEP     - Run one simulation step\n";
+            std::cout << "  STATUS   - Show current traffic status\n";
+            std::cout << "  STATS    - Show simulation statistics\n";
+            std::cout << "  FIXED    - Use fixed traffic light timing\n";
+            std::cout << "  ADAPT    - Use adaptive traffic light timing\n";
+            std::cout << "  COMPARE  - Compare fixed and adaptive mode\n";
+            std::cout << "  EXIT     - Close program\n";
             continue;
         }
 
@@ -43,15 +54,6 @@ int main() {
             simulation.step();
             continue;
         }
-        if (command == "FIXED" || command == "fixed") {
-        simulation.useFixedMode();
-        continue;
-        }
-
-        if (command == "ADAPT" || command == "adapt" || command == "ADAPTIVE" || command == "adaptive") {
-        simulation.useAdaptiveMode();
-        continue;
-        }
 
         if (command == "STATUS" || command == "status") {
             simulation.printStatus();
@@ -60,6 +62,35 @@ int main() {
 
         if (command == "STATS" || command == "stats") {
             simulation.printStatistics();
+            continue;
+        }
+
+        if (command == "FIXED" || command == "fixed") {
+            simulation.useFixedMode();
+            continue;
+        }
+
+        if (command == "ADAPT" || command == "adapt" ||
+            command == "ADAPTIVE" || command == "adaptive") {
+            simulation.useAdaptiveMode();
+            continue;
+        }
+
+        if (command == "COMPARE" || command == "compare") {
+            const int comparisonSteps = 30;
+
+            cityflow::Simulation fixedSimulation;
+            fixedSimulation.useFixedMode(false);
+            fixedSimulation.runSteps(comparisonSteps, false);
+
+            cityflow::Simulation adaptiveSimulation;
+            adaptiveSimulation.useAdaptiveMode(false);
+            adaptiveSimulation.runSteps(comparisonSteps, false);
+
+            std::cout << "\nComparison after " << comparisonSteps << " simulation steps:\n";
+            printComparisonResult("Fixed", fixedSimulation.getStatistics());
+            printComparisonResult("Adaptive", adaptiveSimulation.getStatistics());
+
             continue;
         }
 

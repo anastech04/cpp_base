@@ -18,36 +18,60 @@ void Simulation::start() {
     std::cout << "CityFlow simulation started.\n";
     std::cout << "Use STEP to run the simulation step by step.\n";
 }
-void Simulation::useFixedMode() {
+
+void Simulation::useFixedMode(bool verbose) {
     trafficController.setMode(ControllerMode::Fixed);
-    std::cout << "Traffic controller mode set to FIXED.\n";
+
+    if (verbose) {
+        std::cout << "Traffic controller mode set to FIXED.\n";
+    }
 }
 
-void Simulation::useAdaptiveMode() {
+void Simulation::useAdaptiveMode(bool verbose) {
     trafficController.setMode(ControllerMode::Adaptive);
-    std::cout << "Traffic controller mode set to ADAPTIVE.\n";
+
+    if (verbose) {
+        std::cout << "Traffic controller mode set to ADAPTIVE.\n";
+    }
 }
 
-void Simulation::step() {
+void Simulation::step(bool verbose) {
     ++currentStep;
 
-    std::cout << "\n--- Simulation step " << currentStep << " ---\n";
+    if (verbose) {
+        std::cout << "\n--- Simulation step " << currentStep << " ---\n";
+    }
 
-    generateVehicles();
+    generateVehicles(verbose);
     updateTrafficLights();
-    moveVehicles();
-    printStatus();
+    moveVehicles(verbose);
+
+    if (verbose) {
+        printStatus();
+    }
 }
 
-void Simulation::generateVehicles() {
+void Simulation::runSteps(int numberOfSteps, bool verbose) {
+    for (int i = 0; i < numberOfSteps; ++i) {
+        step(verbose);
+    }
+}
+
+void Simulation::generateVehicles(bool verbose) {
     if (currentStep % 2 == 0) {
         northRoad.addVehicle(Vehicle(nextVehicleId++, "North", "Center"));
-        std::cout << "New vehicle added to North Road.\n";
+
+        if (verbose) {
+            std::cout << "New vehicle added to North Road.\n";
+        }
     }
 
     if (currentStep % 3 == 0) {
         eastRoad.addVehicle(Vehicle(nextVehicleId++, "East", "Center"));
-        std::cout << "New vehicle added to East Road.\n";
+
+        if (verbose) {
+            std::cout << "New vehicle added to East Road.\n";
+        }
     }
 }
 
@@ -55,14 +79,17 @@ void Simulation::updateTrafficLights() {
     trafficController.update(northRoad.getVehicleCount(), eastRoad.getVehicleCount());
 }
 
-void Simulation::moveVehicles() {
+void Simulation::moveVehicles(bool verbose) {
     auto northVehicle = northRoad.step(trafficController.canNorthSouthPass());
 
     if (northVehicle.has_value()) {
         ++arrivedVehicles;
         totalWaitingTime += northVehicle->getWaitingTime();
         totalTravelTime += northVehicle->getTravelTime();
-        std::cout << "Vehicle passed from North Road.\n";
+
+        if (verbose) {
+            std::cout << "Vehicle passed from North Road.\n";
+        }
     }
 
     auto eastVehicle = eastRoad.step(trafficController.canEastWestPass());
@@ -71,7 +98,10 @@ void Simulation::moveVehicles() {
         ++arrivedVehicles;
         totalWaitingTime += eastVehicle->getWaitingTime();
         totalTravelTime += eastVehicle->getTravelTime();
-        std::cout << "Vehicle passed from East Road.\n";
+
+        if (verbose) {
+            std::cout << "Vehicle passed from East Road.\n";
+        }
     }
 }
 
@@ -86,22 +116,32 @@ void Simulation::printStatus() const {
     std::cout << "Vehicles waiting on East Road: " << eastRoad.getVehicleCount() << "\n";
 }
 
-void Simulation::printStatistics() const {
-    std::cout << "\nSimulation statistics:\n";
-    std::cout << "Current step: " << currentStep << "\n";
-    std::cout << "Arrived vehicles: " << arrivedVehicles << "\n";
-    std::cout << "North Road congestion events: " << northRoad.getCongestionEvents() << "\n";
-    std::cout << "East Road congestion events: " << eastRoad.getCongestionEvents() << "\n";
+SimulationStats Simulation::getStatistics() const {
+    SimulationStats stats;
+
+    stats.steps = currentStep;
+    stats.arrivedVehicles = arrivedVehicles;
+    stats.northCongestionEvents = northRoad.getCongestionEvents();
+    stats.eastCongestionEvents = eastRoad.getCongestionEvents();
 
     if (arrivedVehicles > 0) {
-        std::cout << "Average waiting time: "
-                  << static_cast<double>(totalWaitingTime) / arrivedVehicles << "\n";
-        std::cout << "Average travel time: "
-                  << static_cast<double>(totalTravelTime) / arrivedVehicles << "\n";
-    } else {
-        std::cout << "Average waiting time: 0\n";
-        std::cout << "Average travel time: 0\n";
+        stats.averageWaitingTime = static_cast<double>(totalWaitingTime) / arrivedVehicles;
+        stats.averageTravelTime = static_cast<double>(totalTravelTime) / arrivedVehicles;
     }
+
+    return stats;
+}
+
+void Simulation::printStatistics() const {
+    const SimulationStats stats = getStatistics();
+
+    std::cout << "\nSimulation statistics:\n";
+    std::cout << "Current step: " << stats.steps << "\n";
+    std::cout << "Arrived vehicles: " << stats.arrivedVehicles << "\n";
+    std::cout << "North Road congestion events: " << stats.northCongestionEvents << "\n";
+    std::cout << "East Road congestion events: " << stats.eastCongestionEvents << "\n";
+    std::cout << "Average waiting time: " << stats.averageWaitingTime << "\n";
+    std::cout << "Average travel time: " << stats.averageTravelTime << "\n";
 }
 
 }
