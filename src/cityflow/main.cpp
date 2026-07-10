@@ -1,6 +1,7 @@
 #include "Simulation.hpp"
 #include "CityGraph.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <string>
 
@@ -50,6 +51,7 @@ int main() {
         }
 
         if (command == "HELP" || command == "help") {
+            
             std::cout << "  CLOSE    - Close road North -> Center\n";
             std::cout << "  OPEN     - Open road North -> Center\n";
             std::cout << "  GRAPH    - Show road network\n";
@@ -154,6 +156,40 @@ if (command == "OPEN" || command == "open") {
     graph.openRoad("Center", "North");
 
     std::cout << "Road between North and Center has been opened.\n";
+    continue;
+}
+if (command == "BENCHMARK" || command == "benchmark") {
+    const int benchmarkSteps = 5000;
+
+    auto fixedStart = std::chrono::high_resolution_clock::now();
+
+    cityflow::Simulation fixedSimulation;
+    fixedSimulation.useFixedMode(false);
+    fixedSimulation.runSteps(benchmarkSteps, false);
+
+    auto fixedEnd = std::chrono::high_resolution_clock::now();
+
+    auto adaptiveStart = std::chrono::high_resolution_clock::now();
+
+    cityflow::Simulation adaptiveSimulation;
+    adaptiveSimulation.useAdaptiveMode(false);
+    adaptiveSimulation.runSteps(benchmarkSteps, false);
+
+    auto adaptiveEnd = std::chrono::high_resolution_clock::now();
+
+    const auto fixedDuration =
+        std::chrono::duration_cast<std::chrono::milliseconds>(fixedEnd - fixedStart).count();
+
+    const auto adaptiveDuration =
+        std::chrono::duration_cast<std::chrono::milliseconds>(adaptiveEnd - adaptiveStart).count();
+
+    std::cout << "\nBenchmark after " << benchmarkSteps << " simulation steps:\n";
+    std::cout << "Fixed mode runtime: " << fixedDuration << " ms\n";
+    std::cout << "Adaptive mode runtime: " << adaptiveDuration << " ms\n";
+
+    printComparisonResult("Fixed", fixedSimulation.getStatistics());
+    printComparisonResult("Adaptive", adaptiveSimulation.getStatistics());
+
     continue;
 }
 
