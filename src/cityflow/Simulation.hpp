@@ -1,5 +1,5 @@
 #pragma once
-
+#include "CityGraph.hpp"
 #include "Road.hpp"
 #include "TrafficController.hpp"
 
@@ -21,7 +21,7 @@ private:
 
     Road northRoad;
     Road eastRoad;
-
+    CityGraph cityGraph;
     TrafficController trafficController;
 
     int arrivedVehicles;
@@ -46,6 +46,7 @@ private:
     void generateVehicles(bool verbose);
     void updateTrafficLights();
     void moveVehicles(bool verbose);
+    void setupCityGraph();
 };
 
 }

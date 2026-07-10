@@ -12,7 +12,20 @@ Simulation::Simulation()
       trafficController(3, 1),
       arrivedVehicles(0),
       totalWaitingTime(0),
-      totalTravelTime(0) {}
+      totalTravelTime(0) {
+    setupCityGraph();
+}
+void Simulation::setupCityGraph() {
+    cityGraph.addBidirectionalRoad("North", "Center", 3);
+    cityGraph.addBidirectionalRoad("East", "Center", 4);
+    cityGraph.addBidirectionalRoad("South", "Center", 3);
+    cityGraph.addBidirectionalRoad("West", "Center", 4);
+
+    cityGraph.addBidirectionalRoad("North", "East", 6);
+    cityGraph.addBidirectionalRoad("East", "South", 5);
+    cityGraph.addBidirectionalRoad("South", "West", 6);
+    cityGraph.addBidirectionalRoad("West", "North", 5);
+}
 
 void Simulation::start() {
     std::cout << "CityFlow simulation started.\n";
@@ -59,18 +72,30 @@ void Simulation::runSteps(int numberOfSteps, bool verbose) {
 
 void Simulation::generateVehicles(bool verbose) {
     if (currentStep % 2 == 0) {
-        northRoad.addVehicle(Vehicle(nextVehicleId++, "North", "Center"));
+        const auto route = cityGraph.findShortestPath("North", "South");
 
-        if (verbose) {
-            std::cout << "New vehicle added to North Road.\n";
+        if (route.found) {
+            Vehicle vehicle(nextVehicleId++, "North", "South", route.path);
+            northRoad.addVehicle(vehicle);
+
+            if (verbose) {
+                std::cout << "New vehicle added to North Road. Route: "
+                          << vehicle.routeToString() << "\n";
+            }
         }
     }
 
     if (currentStep % 3 == 0) {
-        eastRoad.addVehicle(Vehicle(nextVehicleId++, "East", "Center"));
+        const auto route = cityGraph.findShortestPath("East", "West");
 
-        if (verbose) {
-            std::cout << "New vehicle added to East Road.\n";
+        if (route.found) {
+            Vehicle vehicle(nextVehicleId++, "East", "West", route.path);
+            eastRoad.addVehicle(vehicle);
+
+            if (verbose) {
+                std::cout << "New vehicle added to East Road. Route: "
+                          << vehicle.routeToString() << "\n";
+            }
         }
     }
 }
