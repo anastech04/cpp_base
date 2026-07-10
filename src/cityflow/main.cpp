@@ -1,7 +1,24 @@
 #include "Simulation.hpp"
+#include "CityGraph.hpp"
 
 #include <iostream>
 #include <string>
+
+cityflow::CityGraph createSampleCityGraph() {
+    cityflow::CityGraph graph;
+
+    graph.addBidirectionalRoad("North", "Center", 3);
+    graph.addBidirectionalRoad("East", "Center", 4);
+    graph.addBidirectionalRoad("South", "Center", 3);
+    graph.addBidirectionalRoad("West", "Center", 4);
+
+    graph.addBidirectionalRoad("North", "East", 6);
+    graph.addBidirectionalRoad("East", "South", 5);
+    graph.addBidirectionalRoad("South", "West", 6);
+    graph.addBidirectionalRoad("West", "North", 5);
+
+    return graph;
+}
 
 void printComparisonResult(const std::string& name, const cityflow::SimulationStats& stats) {
     std::cout << "\n" << name << " mode result:\n";
@@ -15,6 +32,7 @@ void printComparisonResult(const std::string& name, const cityflow::SimulationSt
 
 int main() {
     cityflow::Simulation simulation;
+    cityflow::CityGraph graph = createSampleCityGraph();
 
     std::cout << "CityFlow - Traffic Flow Simulator\n";
     std::cout << "Focus: simulation logic, traffic lights, waiting times, congestion.\n";
@@ -32,6 +50,8 @@ int main() {
         }
 
         if (command == "HELP" || command == "help") {
+            std::cout << "  GRAPH    - Show road network\n";
+            std::cout << "  ROUTE    - Calculate shortest route with Dijkstra\n";
             std::cout << "Available commands:\n";
             std::cout << "  HELP     - Show commands\n";
             std::cout << "  START    - Start simulation\n";
@@ -93,6 +113,32 @@ int main() {
 
             continue;
         }
+        if (command == "GRAPH" || command == "graph") {
+    graph.printGraph();
+    continue;
+}
+
+if (command == "ROUTE" || command == "route") {
+    const auto route = graph.findShortestPath("North", "South");
+
+    if (!route.found) {
+        std::cout << "No route found.\n";
+        continue;
+    }
+
+    std::cout << "\nShortest route from North to South:\n";
+
+    for (size_t i = 0; i < route.path.size(); ++i) {
+        std::cout << route.path[i];
+
+        if (i + 1 < route.path.size()) {
+            std::cout << " -> ";
+        }
+    }
+
+    std::cout << "\nTotal travel time: " << route.totalTravelTime << "\n";
+    continue;
+}
 
         std::cout << "Unknown command: " << command << "\n";
     }
