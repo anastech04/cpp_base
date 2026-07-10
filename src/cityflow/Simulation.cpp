@@ -75,7 +75,7 @@ void Simulation::generateVehicles(bool verbose) {
         const auto route = cityGraph.findShortestPath("North", "South");
 
         if (route.found) {
-            Vehicle vehicle(nextVehicleId++, "North", "South", route.path);
+            Vehicle vehicle(nextVehicleId++, "North", "South", route.path, route.totalTravelTime);
             northRoad.addVehicle(vehicle);
 
             if (verbose) {
@@ -89,7 +89,7 @@ void Simulation::generateVehicles(bool verbose) {
         const auto route = cityGraph.findShortestPath("East", "West");
 
         if (route.found) {
-            Vehicle vehicle(nextVehicleId++, "East", "West", route.path);
+            Vehicle vehicle(nextVehicleId++, "East", "West", route.path, route.totalTravelTime);
             eastRoad.addVehicle(vehicle);
 
             if (verbose) {

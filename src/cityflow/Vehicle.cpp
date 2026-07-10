@@ -8,11 +8,13 @@ namespace cityflow {
 Vehicle::Vehicle(int id,
                  std::string startNode,
                  std::string destinationNode,
-                 std::vector<std::string> route)
+                 std::vector<std::string> route,
+                 int plannedTravelTime)
     : id(id),
       startNode(std::move(startNode)),
       destinationNode(std::move(destinationNode)),
       route(std::move(route)),
+      plannedTravelTime(plannedTravelTime),
       waitingTime(0),
       travelTime(0),
       state(VehicleState::Waiting) {
@@ -34,6 +36,10 @@ int Vehicle::getTravelTime() const {
     return travelTime;
 }
 
+int Vehicle::getPlannedTravelTime() const {
+    return plannedTravelTime;
+}
+
 VehicleState Vehicle::getState() const {
     return state;
 }
@@ -46,8 +52,8 @@ void Vehicle::addWaitingTime() {
     ++waitingTime;
 }
 
-void Vehicle::addTravelTime() {
-    ++travelTime;
+void Vehicle::addTravelTime(int amount) {
+    travelTime += amount;
     state = VehicleState::Driving;
 }
 

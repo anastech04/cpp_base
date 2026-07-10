@@ -34,7 +34,7 @@ std::optional<Vehicle> Road::step(bool canPass) {
     Vehicle vehicle = vehicles.front();
     vehicles.pop();
 
-    vehicle.addTravelTime();
+    vehicle.addTravelTime(vehicle.getPlannedTravelTime());
     vehicle.markArrived();
 
     ++passedVehicles;
