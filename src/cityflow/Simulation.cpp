@@ -18,6 +18,15 @@ void Simulation::start() {
     std::cout << "CityFlow simulation started.\n";
     std::cout << "Use STEP to run the simulation step by step.\n";
 }
+void Simulation::useFixedMode() {
+    trafficController.setMode(ControllerMode::Fixed);
+    std::cout << "Traffic controller mode set to FIXED.\n";
+}
+
+void Simulation::useAdaptiveMode() {
+    trafficController.setMode(ControllerMode::Adaptive);
+    std::cout << "Traffic controller mode set to ADAPTIVE.\n";
+}
 
 void Simulation::step() {
     ++currentStep;
@@ -68,6 +77,7 @@ void Simulation::moveVehicles() {
 
 void Simulation::printStatus() const {
     std::cout << "\nCurrent status:\n";
+    std::cout << "Controller mode: " << trafficController.getModeName() << "\n";
     std::cout << "Current phase: " << trafficController.getCurrentPhaseName() << "\n";
     std::cout << "North-South light: " << trafficController.getNorthSouthLightState() << "\n";
     std::cout << "East-West light: " << trafficController.getEastWestLightState() << "\n";

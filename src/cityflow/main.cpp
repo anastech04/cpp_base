@@ -22,6 +22,8 @@ int main() {
         }
 
         if (command == "HELP" || command == "help") {
+            std::cout << "  FIXED   - Use fixed traffic light timing\n";
+            std::cout << "  ADAPT   - Use adaptive traffic light timing\n";
             std::cout << "Available commands:\n";
             std::cout << "  HELP    - Show commands\n";
             std::cout << "  START   - Start simulation\n";
@@ -40,6 +42,15 @@ int main() {
         if (command == "STEP" || command == "step") {
             simulation.step();
             continue;
+        }
+        if (command == "FIXED" || command == "fixed") {
+        simulation.useFixedMode();
+        continue;
+        }
+
+        if (command == "ADAPT" || command == "adapt" || command == "ADAPTIVE" || command == "adaptive") {
+        simulation.useAdaptiveMode();
+        continue;
         }
 
         if (command == "STATUS" || command == "status") {

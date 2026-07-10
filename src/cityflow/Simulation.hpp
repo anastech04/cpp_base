@@ -29,6 +29,9 @@ public:
     void printStatus() const;
     void printStatistics() const;
 
+    void useFixedMode();
+    void useAdaptiveMode();
+
 private:
     void generateVehicles();
     void updateTrafficLights();
